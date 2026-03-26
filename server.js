@@ -13,8 +13,8 @@ const ROOBET_USER_ID = process.env.ROOBET_USER_ID;
 const ROOBET_API_KEY = process.env.ROOBET_API_KEY;
 const ROOBET_STATS_URL = 'https://roobetconnect.com/affiliate/v2/stats';
 
-// Prize distribution for top 10 ($2,500 total)
-const PRIZES = [750, 500, 325, 225, 175, 150, 125, 100, 85, 65];
+// Prize distribution for top 10 ($250 total — bi-weekly)
+const PRIZES = [75, 50, 30, 25, 20, 15, 12, 10, 8, 5];
 
 // ─── Middleware ───────────────────────────────────────────
 app.use(cors());
@@ -30,18 +30,32 @@ function maskUsername(username) {
   return first + stars + last;
 }
 
-function getMonthStartISO() {
+function getPeriodStartISO() {
   const now = new Date();
-  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString();
+  const day = now.getUTCDate();
+  if (day <= 15) {
+    // First half: 1st to 15th
+    return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString();
+  } else {
+    // Second half: 16th to end of month
+    return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 16)).toISOString();
+  }
 }
 
 function getNowISO() {
   return new Date().toISOString();
 }
 
-function getEndOfMonthISO() {
+function getPeriodEndISO() {
   const now = new Date();
-  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1)).toISOString();
+  const day = now.getUTCDate();
+  if (day <= 15) {
+    // First half ends on 16th
+    return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 16)).toISOString();
+  } else {
+    // Second half ends on 1st of next month
+    return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1)).toISOString();
+  }
 }
 
 // ─── In-memory cache ─────────────────────────────────────
@@ -54,7 +68,7 @@ const CACHE_TTL = 15 * 60 * 1000; // 15 minutes
 async function fetchFromRoobet(includeCategories) {
   const params = new URLSearchParams();
   params.set('userId', ROOBET_USER_ID);
-  params.set('startDate', getMonthStartISO());
+  params.set('startDate', getPeriodStartISO());
   params.set('endDate', getNowISO());
   params.set('sortBy', 'wagered');
 
@@ -106,10 +120,10 @@ function processAndRespond(data, res) {
 
   const result = {
     leaderboard: top10,
-    totalPrizePool: 2500,
+    totalPrizePool: 250,
     updatedAt: new Date().toISOString(),
-    monthStart: getMonthStartISO(),
-    monthEnd: getEndOfMonthISO(),
+    periodStart: getPeriodStartISO(),
+    periodEnd: getPeriodEndISO(),
     totalParticipants: sorted.length
   };
 
