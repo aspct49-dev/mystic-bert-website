@@ -585,8 +585,9 @@ function renderTable(lb){
   const tableEl = document.getElementById('lb-table');
   if(!lb||lb.length<=3){tableEl.innerHTML='';return;}
   let html='';
-  lb.slice(3).forEach(u=>{
-    html+=`<div class="lb-row">
+  lb.slice(3).forEach((u,i)=>{
+    const delay = 0.1 * (i + 1);
+    html+=`<div class="lb-row reveal" style="transition-delay:${delay}s">
       <div class="lb-rank">${u.rank}</div>
       <div class="lb-user"><div class="lb-avatar">${u.username.charAt(0).toUpperCase()}</div><div class="lb-name">${u.username}</div></div>
       <div class="lb-wager">${formatUSD(u.wagered)}</div>
@@ -594,6 +595,8 @@ function renderTable(lb){
     </div>`;
   });
   tableEl.innerHTML=html;
+  // Observe new rows for scroll reveal
+  tableEl.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 }
 
 function renderParticipants(data){
@@ -615,9 +618,6 @@ async function fetchLeaderboard(){
   }
 }
 
-// Initial fetch + auto-refresh
-fetchLeaderboard();
-setInterval(fetchLeaderboard, REFRESH_INTERVAL);
 // ─── Scroll Reveal Animations ───
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
@@ -630,6 +630,10 @@ const revealObserver = new IntersectionObserver((entries) => {
 document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
   revealObserver.observe(el);
 });
+
+// Initial fetch + auto-refresh
+fetchLeaderboard();
+setInterval(fetchLeaderboard, REFRESH_INTERVAL);
 </script>
 </body>
 </html>
