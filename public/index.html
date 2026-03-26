@@ -63,7 +63,7 @@ body{
 /* ===== BRAND TEXT ===== */
 .nav__brand-text{
   font-family:'Chakra Petch',sans-serif;
-  font-size:22px;font-weight:700;letter-spacing:2px;
+  font-size:clamp(28px, 4vw, 42px);font-weight:700;letter-spacing:4px;
   text-transform:uppercase;
   background:linear-gradient(135deg,#fff 0%,var(--gold) 50%,#fff 100%);
   background-size:200% 200%;
@@ -402,6 +402,19 @@ body{
   .lb-header,.lb-row{grid-template-columns:36px 1fr 90px 72px;gap:4px}
   .lb-name{font-size:12px}
 }
+/* ===== SCROLL REVEAL ===== */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s cubic-bezier(.23,1,.32,1),transform .7s cubic-bezier(.23,1,.32,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity .7s cubic-bezier(.23,1,.32,1),transform .7s cubic-bezier(.23,1,.32,1)}
+.reveal-left.visible{opacity:1;transform:translateX(0)}
+.reveal-right{opacity:0;transform:translateX(40px);transition:opacity .7s cubic-bezier(.23,1,.32,1),transform .7s cubic-bezier(.23,1,.32,1)}
+.reveal-right.visible{opacity:1;transform:translateX(0)}
+.reveal-scale{opacity:0;transform:scale(.9);transition:opacity .7s cubic-bezier(.23,1,.32,1),transform .7s cubic-bezier(.23,1,.32,1)}
+.reveal-scale.visible{opacity:1;transform:scale(1)}
+.stagger-1{transition-delay:.1s}
+.stagger-2{transition-delay:.2s}
+.stagger-3{transition-delay:.3s}
+.stagger-4{transition-delay:.4s}
 </style>
 </head>
 <body>
@@ -449,7 +462,7 @@ body{
   </section>
 
   <!-- COUNTDOWN -->
-  <div class="countdown-section">
+  <div class="countdown-section reveal">
     <div class="cd-box"><div class="cd-val" id="cd-d">00</div><div class="cd-label">Days</div></div>
     <div class="cd-box"><div class="cd-val" id="cd-h">00</div><div class="cd-label">Hours</div></div>
     <div class="cd-box"><div class="cd-val" id="cd-m">00</div><div class="cd-label">Mins</div></div>
@@ -457,12 +470,12 @@ body{
   </div>
 
   <!-- PODIUM (dynamically populated) -->
-  <div class="podium" id="podium">
+  <div class="podium reveal-scale" id="podium">
     <p style="color:var(--text-sec);text-align:center;grid-column:1/-1;padding:40px 0">Loading leaderboard...</p>
   </div>
 
   <!-- LEADERBOARD TABLE (dynamically populated) -->
-  <section class="lb-section">
+  <section class="lb-section reveal">
     <div class="lb-header">
       <div>#</div>
       <div>User</div>
@@ -475,12 +488,12 @@ body{
   </section>
 
   <!-- INFO (Roobet required disclosure) -->
-  <div class="info-banner">
+  <div class="info-banner reveal-left">
     ⚠️ Leaderboard updates every <strong>15 minutes</strong>. Your wagers on Roobet will count towards the leaderboard at the following weights based on the games you are playing (to prevent abuse): Games with an RTP of <span class="highlight">97% or less → 100%</span>. Games with an RTP <span class="highlight">above 97% → 50%</span>. Games with an RTP <span class="highlight">98% and above → 10%</span>. Only <strong>Slots</strong> and <strong>Housegames</strong> count (dice is excluded).
   </div>
 
   <!-- RULES -->
-  <section class="rules">
+  <section class="rules reveal-right">
     <div class="rules__title">📋 Leaderboard Rules</div>
     <ul class="rules__list">
       <li>You must be signed up on Roobet using code <strong style="color:var(--roo-yellow)">MYSTICBERT</strong> to qualify.</li>
@@ -605,6 +618,18 @@ async function fetchLeaderboard(){
 // Initial fetch + auto-refresh
 fetchLeaderboard();
 setInterval(fetchLeaderboard, REFRESH_INTERVAL);
+// ─── Scroll Reveal Animations ───
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
+  revealObserver.observe(el);
+});
 </script>
 </body>
 </html>
