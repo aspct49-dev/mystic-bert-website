@@ -58,7 +58,7 @@ body{
 /* ===== BRAND TEXT ===== */
 .nav__brand-text{
   font-family:'Chakra Petch',sans-serif;
-  font-size:clamp(28px, 4vw, 42px);font-weight:700;letter-spacing:4px;
+  font-size:22px;font-weight:700;letter-spacing:2px;
   text-transform:uppercase;
   background:linear-gradient(135deg,#fff 0%,var(--gold) 50%,#fff 100%);
   background-size:200% 200%;
@@ -172,7 +172,7 @@ body{
   position:relative;overflow:hidden;
   transition:transform .3s,border-color .3s;
 }
-.podium-card:hover{transform:translateY(-4px)}
+.podium-card:hover{transform:translateY(-4px);box-shadow:0 0 20px #ffd70022,0 0 40px #ffd70011}
 .podium-card::before{
   content:'';position:absolute;top:0;left:0;right:0;height:2px;
 }
@@ -244,7 +244,7 @@ body{
   border-bottom:1px solid #1a1b2e66;
   transition:background .2s;
 }
-.lb-row:hover{background:var(--bg-card-hover)}
+.lb-row:hover{background:var(--bg-card-hover);box-shadow:0 0 15px #ffd70022,0 0 30px #ffd70011;border-color:#ffd70033}
 .lb-rank{
   font-family:'Chakra Petch',sans-serif;font-size:15px;font-weight:700;color:var(--text-sec);
 }
@@ -433,11 +433,6 @@ body{
     <p style="color:var(--text-sec);text-align:center;grid-column:1/-1;padding:40px 0">Loading leaderboard...</p>
   </div>
 
-  <!-- INFO (Roobet required disclosure) -->
-  <div class="info-banner">
-    ⚠️ Leaderboard updates every <strong>15 minutes</strong>. Your wagers on Roobet will count towards the leaderboard at the following weights based on the games you are playing (to prevent abuse): Games with an RTP of <span class="highlight">97% or less → 100%</span>. Games with an RTP <span class="highlight">above 97% → 50%</span>. Games with an RTP <span class="highlight">98% and above → 10%</span>. Only <strong>Slots</strong> and <strong>Housegames</strong> count (dice is excluded).
-  </div>
-
   <!-- LEADERBOARD TABLE (dynamically populated) -->
   <section class="lb-section">
     <div class="lb-header">
@@ -450,6 +445,11 @@ body{
       <!-- Rows 4-10 populated by JS -->
     </div>
   </section>
+
+  <!-- INFO (Roobet required disclosure) -->
+  <div class="info-banner">
+    ⚠️ Leaderboard updates every <strong>15 minutes</strong>. Your wagers on Roobet will count towards the leaderboard at the following weights based on the games you are playing (to prevent abuse): Games with an RTP of <span class="highlight">97% or less → 100%</span>. Games with an RTP <span class="highlight">above 97% → 50%</span>. Games with an RTP <span class="highlight">98% and above → 10%</span>. Only <strong>Slots</strong> and <strong>Housegames</strong> count (dice is excluded).
+  </div>
 
   <!-- RULES -->
   <section class="rules">
