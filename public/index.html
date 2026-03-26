@@ -43,9 +43,14 @@ body{
 .bg-glow{
   position:fixed;inset:0;z-index:0;pointer-events:none;
   background:
-    radial-gradient(ellipse 70% 50% at 50% -10%,#d4a01712 0%,transparent 60%),
-    radial-gradient(ellipse 40% 40% at 85% 20%,#c0392b0a 0%,transparent 50%),
-    radial-gradient(ellipse 50% 50% at 10% 80%,#d4a01708 0%,transparent 50%);
+    radial-gradient(ellipse 70% 50% at 50% -10%,#d4a01718 0%,transparent 60%),
+    radial-gradient(ellipse 40% 40% at 85% 20%,#c0392b10 0%,transparent 50%),
+    radial-gradient(ellipse 50% 50% at 10% 80%,#d4a01710 0%,transparent 50%);
+  animation:bgPulse 8s ease-in-out infinite;
+}
+@keyframes bgPulse{
+  0%,100%{opacity:.7}
+  50%{opacity:1}
 }
 .scanlines{
   position:fixed;inset:0;z-index:1;pointer-events:none;
@@ -95,8 +100,18 @@ body{
   text-decoration:none;border:none;cursor:pointer;
   transition:transform .2s,box-shadow .2s;
   display:inline-flex;align-items:center;gap:6px;
+  position:relative;overflow:hidden;
 }
-.nav__cta:hover{transform:translateY(-1px);box-shadow:0 4px 24px var(--gold-dim)}
+.nav__cta::after{
+  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);
+  animation:ctaSweep 3s ease-in-out infinite;
+}
+@keyframes ctaSweep{
+  0%{left:-100%}
+  50%,100%{left:120%}
+}
+.nav__cta:hover{transform:translateY(-2px) scale(1.05);box-shadow:0 4px 30px var(--gold-dim),0 0 15px #ffd70033}
 
 /* ===== HERO ===== */
 .hero{text-align:center;padding:20px 0 36px;position:relative}
@@ -128,7 +143,12 @@ body{
   background-size:200% 200%;
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
   background-clip:text;
-  animation:shimmer 3s ease-in-out infinite,fadeDown .5s ease .1s both;
+  animation:shimmer 3s ease-in-out infinite,fadeDown .5s ease .1s both,prizeGlow 4s ease-in-out infinite;
+  filter:drop-shadow(0 0 20px #ffd70033);
+}
+@keyframes prizeGlow{
+  0%,100%{filter:drop-shadow(0 0 20px #ffd70022);transform:scale(1)}
+  50%{filter:drop-shadow(0 0 40px #ffd70044);transform:scale(1.02)}
 }
 .hero__sub{
   font-size:15px;color:var(--text-sec);margin-top:8px;
@@ -154,6 +174,13 @@ body{
 .cd-val{
   font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;
   color:var(--text);line-height:1;
+  transition:transform .3s ease;
+}
+.cd-val.tick{animation:cdTick .4s ease}
+@keyframes cdTick{
+  0%{transform:scale(1)}
+  30%{transform:scale(1.15)}
+  100%{transform:scale(1)}
 }
 .cd-label{
   font-size:10px;font-weight:600;letter-spacing:2px;
@@ -170,9 +197,9 @@ body{
   background:var(--bg-card);border:1px solid var(--border);
   border-radius:16px;padding:24px 16px 20px;text-align:center;
   position:relative;overflow:hidden;
-  transition:transform .3s,border-color .3s;
+  transition:transform .4s cubic-bezier(.23,1,.32,1),border-color .3s,box-shadow .4s;
 }
-.podium-card:hover{transform:translateY(-4px);box-shadow:0 0 20px #ffd70022,0 0 40px #ffd70011}
+.podium-card:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 0 25px #ffd70022,0 0 50px #ffd70011}
 .podium-card::before{
   content:'';position:absolute;top:0;left:0;right:0;height:2px;
 }
@@ -242,9 +269,10 @@ body{
   display:grid;grid-template-columns:60px 1fr 1fr 120px;
   padding:14px 20px;align-items:center;
   border-bottom:1px solid #1a1b2e66;
-  transition:background .2s;
+  transition:all .3s cubic-bezier(.23,1,.32,1);
+  border-radius:8px;
 }
-.lb-row:hover{background:var(--bg-card-hover);box-shadow:0 0 15px #ffd70022,0 0 30px #ffd70011;border-color:#ffd70033}
+.lb-row:hover{background:var(--bg-card-hover);box-shadow:0 0 20px #ffd70018,0 0 40px #ffd70010;border-color:#ffd70022;transform:translateX(4px)}
 .lb-rank{
   font-family:'Chakra Petch',sans-serif;font-size:15px;font-weight:700;color:var(--text-sec);
 }
@@ -498,10 +526,13 @@ function updateCountdown(){
   const h=Math.floor((diff%864e5)/36e5);
   const m=Math.floor((diff%36e5)/6e4);
   const s=Math.floor((diff%6e4)/1e3);
+  const sEl=document.getElementById('cd-s');
+  const newS=String(s).padStart(2,'0');
+  if(sEl&&sEl.textContent!==newS){sEl.classList.remove('tick');void sEl.offsetWidth;sEl.classList.add('tick');}
   document.getElementById('cd-d').textContent=String(d).padStart(2,'0');
   document.getElementById('cd-h').textContent=String(h).padStart(2,'0');
   document.getElementById('cd-m').textContent=String(m).padStart(2,'0');
-  document.getElementById('cd-s').textContent=String(s).padStart(2,'0');
+  sEl.textContent=newS;
 }
 updateCountdown();
 setInterval(updateCountdown,1000);
