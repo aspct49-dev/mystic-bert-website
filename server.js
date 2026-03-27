@@ -13,8 +13,8 @@ const ROOBET_USER_ID = process.env.ROOBET_USER_ID;
 const ROOBET_API_KEY = process.env.ROOBET_API_KEY;
 const ROOBET_STATS_URL = 'https://roobetconnect.com/affiliate/v2/stats';
 
-// Prize distribution for top 10 ($250 total — bi-weekly)
-const PRIZES = [75, 50, 30, 25, 20, 15, 12, 10, 8, 5];
+// Prize distribution for top 10 ($250 total — bi-weekly, top 3 paid)
+const PRIZES = [125, 75, 50, 0, 0, 0, 0, 0, 0, 0];
 
 // ─── Middleware ───────────────────────────────────────────
 app.use(cors());
