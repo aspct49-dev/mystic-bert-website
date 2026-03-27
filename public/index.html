@@ -406,6 +406,34 @@ body{
   .lb-header,.lb-row{grid-template-columns:36px 1fr 90px 72px;gap:4px}
   .lb-name{font-size:12px}
 }
+/* ===== SPLASH SCREEN ===== */
+#splash{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  transition:none;
+}
+#splash-gif{
+  max-width:320px;max-height:320px;
+  border-radius:12px;
+}
+#splash.explode{
+  animation:splashExplode .8s cubic-bezier(.23,1,.32,1) forwards;
+}
+@keyframes splashExplode{
+  0%{transform:scale(1);opacity:1;filter:brightness(1)}
+  30%{transform:scale(1.15);opacity:1;filter:brightness(2)}
+  100%{transform:scale(3);opacity:0;filter:brightness(3)}
+}
+#main-content.fade-in{
+  animation:contentReveal .8s ease forwards;
+  animation-delay:.3s;
+}
+@keyframes contentReveal{
+  0%{opacity:0;transform:scale(.97)}
+  100%{opacity:1;transform:scale(1)}
+}
+
 /* ===== SCROLL REVEAL ===== */
 .reveal{opacity:0;transform:translateY(40px);transition:opacity .8s cubic-bezier(.23,1,.32,1),transform .8s cubic-bezier(.23,1,.32,1)}
 .reveal.visible{opacity:1;transform:translateY(0)}
@@ -422,11 +450,16 @@ body{
 </style>
 </head>
 <body>
+<!-- SPLASH SCREEN -->
+<div id="splash">
+  <img src="intro.gif" alt="MysticBert Intro" id="splash-gif">
+</div>
+
 <canvas id="stars-canvas"></canvas>
 <div class="bg-glow"></div>
 <div class="scanlines"></div>
 
-<div class="wrapper">
+<div class="wrapper" id="main-content" style="opacity:0;">
 
   <!-- NAV -->
   <nav class="nav">
@@ -534,6 +567,20 @@ body{
 </div>
 
 <script>
+// ─── Splash Screen ───
+(function(){
+  const SPLASH_DURATION = 4000; // ms to show the GIF
+  const splash = document.getElementById('splash');
+  const main = document.getElementById('main-content');
+  setTimeout(function(){
+    splash.classList.add('explode');
+    main.classList.add('fade-in');
+    setTimeout(function(){
+      splash.style.display = 'none';
+    }, 900);
+  }, SPLASH_DURATION);
+})();
+
 // ─── Countdown to end of current bi-weekly period ───
 function updateCountdown(){
   const now=new Date();
