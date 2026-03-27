@@ -410,13 +410,22 @@ body{
 #splash{
   position:fixed;inset:0;z-index:9999;
   background:var(--bg);
-  display:flex;align-items:center;justify-content:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;
   transition:none;
 }
 #splash-gif{
-  max-width:320px;max-height:320px;
+  max-width:280px;max-height:280px;
   border-radius:12px;
 }
+#splash-text{
+  font-family:'Chakra Petch',sans-serif;
+  font-size:18px;font-weight:600;letter-spacing:2px;
+  color:var(--gold);
+  opacity:0;
+  transition:opacity .4s ease;
+}
+#splash-text.show{opacity:1}
+#splash-text.hide{opacity:0}
 #splash.explode{
   animation:splashExplode .8s cubic-bezier(.23,1,.32,1) forwards;
 }
@@ -453,6 +462,7 @@ body{
 <!-- SPLASH SCREEN -->
 <div id="splash">
   <img src="intro.gif" alt="MysticBert Intro" id="splash-gif">
+  <div id="splash-text"></div>
 </div>
 
 <canvas id="stars-canvas"></canvas>
@@ -569,16 +579,43 @@ body{
 <script>
 // ─── Splash Screen ───
 (function(){
-  const SPLASH_DURATION = 4000; // ms to show the GIF
+  const phrases = ['Shuffling the cards...', 'Spinning the reels...', 'Placing your bets...'];
   const splash = document.getElementById('splash');
   const main = document.getElementById('main-content');
-  setTimeout(function(){
-    splash.classList.add('explode');
-    main.classList.add('fade-in');
+  const textEl = document.getElementById('splash-text');
+  let index = 0;
+
+  function showPhrase(){
+    textEl.classList.remove('show');
+    textEl.classList.add('hide');
     setTimeout(function(){
-      splash.style.display = 'none';
-    }, 900);
-  }, SPLASH_DURATION);
+      textEl.textContent = phrases[index];
+      textEl.classList.remove('hide');
+      textEl.classList.add('show');
+      index++;
+    }, 300);
+  }
+
+  // Show first phrase immediately
+  showPhrase();
+  // Cycle every 800ms
+  const interval = setInterval(function(){
+    if(index >= phrases.length){
+      clearInterval(interval);
+      // Fade out text, then explode
+      textEl.classList.remove('show');
+      textEl.classList.add('hide');
+      setTimeout(function(){
+        splash.classList.add('explode');
+        main.classList.add('fade-in');
+        setTimeout(function(){
+          splash.style.display = 'none';
+        }, 900);
+      }, 400);
+      return;
+    }
+    showPhrase();
+  }, 800);
 })();
 
 // ─── Countdown to end of current bi-weekly period ───
